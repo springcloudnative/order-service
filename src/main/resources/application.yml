@@ -9,3 +9,11 @@ spring:
     name: order-service
   lifecycle:
     timeout-per-shutdown-phase: 15s
+  r2dbc:
+    username: ${DB_USERNAME:order_user}
+    password: ${DB_PASSWORD:b3JkZXJfdXNlcgo=}
+    url: jdbc:mysql://${DB_HOST:localhost}:3306/${DB_NAME:polardb_catalog}?useSSL=false&allowPublicKeyRetrieval=true
+    pool:
+      max-create-connection-time: 2s
+      initial-size: 5
+      max-size: 10
