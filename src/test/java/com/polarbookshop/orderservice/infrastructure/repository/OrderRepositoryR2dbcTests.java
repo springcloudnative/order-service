@@ -1,6 +1,11 @@
 package com.polarbookshop.orderservice.infrastructure.repository;
 
+import com.polarbookshop.orderservice.application.service.OrderService;
+import com.polarbookshop.orderservice.application.service.OrderServiceImpl;
+import com.polarbookshop.orderservice.domain.OrderStatus;
 import com.polarbookshop.orderservice.infrastructure.configuration.DataConfig;
+import com.polarbookshop.orderservice.infrastructure.entity.OrderEntity;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.r2dbc.DataR2dbcTest;
@@ -22,7 +27,10 @@ public class OrderRepositoryR2dbcTests {
     static MySQLContainer<?> mysql = new MySQLContainer<>(DockerImageName.parse("mysql:8.0"));
 
     @Autowired
-    OrderRepository orderRepository;
+    private OrderR2dbcRepository orderR2dbcRepository;
+
+    private OrderMySqlDbRepository orderMySqlDbRepository;
+    private OrderService orderService;
 
     @DynamicPropertySource
     static void postgresqlProperties(DynamicPropertyRegistry registry) {
@@ -37,10 +45,25 @@ public class OrderRepositoryR2dbcTests {
                 mysql.getMappedPort(MySQLContainer.MYSQL_PORT), mysql.getDatabaseName());
     }
 
+    @BeforeEach
+    void setMockOutput() {
+        orderMySqlDbRepository = new OrderMySqlDbRepository(orderR2dbcRepository);
+        orderService = new OrderServiceImpl(orderMySqlDbRepository);
+    }
+
     @Test
     void findOrderByIdWhenNotExisting() {
-        StepVerifier.create(orderRepository.findById(394L))
+        StepVerifier.create(orderMySqlDbRepository.findById(394L))
                 .expectNextCount(0)
+                .verifyComplete();
+    }
+
+    @Test
+    void createRejectedOrder() {
+        OrderEntity rejectedOrder = OrderServiceImpl.buildRejectedOrder("1234567890", 3);
+
+        StepVerifier.create(orderMySqlDbRepository.save(rejectedOrder))
+                .expectNextMatches(orderEntity -> orderEntity.getStatus().equals(OrderStatus.REJECTED))
                 .verifyComplete();
     }
 }
