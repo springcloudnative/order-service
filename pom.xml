@@ -24,6 +24,7 @@
 		<!--suppress UnresolvedMavenProperty -->
 		<registryUrl>${REGISTRY_URL}</registryUrl>
 		<jib-maven-plugin.version>3.2.1</jib-maven-plugin.version>
+		<json.version>20180130</json.version>
 	</properties>
 
 	<dependencies>
@@ -67,6 +68,12 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>${json.version}</version>
 		</dependency>
 
 		<dependency>
