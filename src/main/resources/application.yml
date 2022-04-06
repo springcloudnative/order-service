@@ -21,7 +21,9 @@ spring:
     user: ${spring.r2dbc.username}
     password: ${spring.r2dbc.password}
     url: jdbc:mysql://${DB_HOST:localhost}:3306/${DB_NAME:polardb_catalog}?useSSL=false&allowPublicKeyRetrieval=true
+    table: order_service_flyway_schema_history
     baseline-on-migrate: true
+    baseline-version: 0
 #  config:
 #    import: "optional:configserver:"
   cloud:

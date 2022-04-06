@@ -1,5 +1,6 @@
 package com.polarbookshop.orderservice.infrastructure.repository;
 
+import com.polarbookshop.orderservice.application.api.client.BookClient;
 import com.polarbookshop.orderservice.application.service.OrderService;
 import com.polarbookshop.orderservice.application.service.OrderServiceImpl;
 import com.polarbookshop.orderservice.domain.OrderStatus;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.r2dbc.DataR2dbcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -29,6 +31,9 @@ public class OrderRepositoryR2dbcTests {
     @Autowired
     private OrderR2dbcRepository orderR2dbcRepository;
 
+    @MockBean
+    BookClient bookClient;
+
     private OrderMySqlDbRepository orderMySqlDbRepository;
     private OrderService orderService;
 
@@ -48,7 +53,7 @@ public class OrderRepositoryR2dbcTests {
     @BeforeEach
     void setMockOutput() {
         orderMySqlDbRepository = new OrderMySqlDbRepository(orderR2dbcRepository);
-        orderService = new OrderServiceImpl(orderMySqlDbRepository);
+        orderService = new OrderServiceImpl(bookClient, orderMySqlDbRepository);
     }
 
     @Test
