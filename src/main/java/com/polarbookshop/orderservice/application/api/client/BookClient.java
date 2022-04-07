@@ -2,16 +2,12 @@ package com.polarbookshop.orderservice.application.api.client;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.polarbookshop.orderservice.domain.dto.Book;
-import com.polarbookshop.orderservice.infrastructure.configuration.ClientProperties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
-import reactor.util.retry.Retry;
-
-import java.time.Duration;
 
 /**
  * This class is used to send HTTP calls to the
@@ -25,13 +21,11 @@ public class BookClient {
 
     private static final String BOOKS_ROOT_API = "/books/";
     private final WebClient webClient;
-    private final ClientProperties clientProperties;
 
     @Autowired
-    public BookClient(WebClient webClient, ClientProperties clientProperties) {
+    public BookClient(WebClient webClient) {
 
         this.webClient = webClient;
-        this.clientProperties = clientProperties;
     }
 
     /**
@@ -50,16 +44,24 @@ public class BookClient {
      * @return
      */
     public Mono<Book> getBookByIsbn(String isbn) {
-        return webClient
+/*        return webClient
                 .get()
                 .uri(BOOKS_ROOT_API + isbn)
                 .retrieve()
                 .bodyToMono(Book.class)
-                .timeout(Duration.ofSeconds(clientProperties.clientTimeOut), Mono.empty())
+                .timeout(Duration.ofSeconds(2), Mono.empty())
                 .onErrorResume(
                         WebClientResponseException.NotFound.class, exception -> Mono.empty()
                 )
-                .retryWhen(Retry.backoff(3, Duration.ofMillis(100)));
+                .retryWhen(Retry.backoff(3, Duration.ofMillis(100)));*/
+
+        return webClient
+                .get()
+                .uri(BOOKS_ROOT_API + isbn)
+                .retrieve()
+                .onStatus(HttpStatus::isError,
+                        response -> Mono.error(new RuntimeException("ClientError")))
+                .bodyToMono(Book.class);
     }
 
     public JsonNode getAllBooks() {

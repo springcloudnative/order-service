@@ -44,3 +44,12 @@ A system is resilient if it keeps providing its services in the face of faults w
 A fallback behavior can help you limit the fault to a small area while preventing the rest of the system from misbehaving or entering a faulty state.
 You want to include fallbacks into your general strategy to make your system resilient, not just for a specific case like timeouts. A fallback function can be
 triggered when some errors or exceptions occur, but they’re not all the same.
+
+# Testing reactive applications with Spring, Reactor, and Testcontainers
+- Test the data persistence layer with sliced tests using the *@DataR2dbcTest* annotation and Testcontainers, similarly to what is done with *@DataJdbcTest*.
+- Tests for the web layer using the *@WebFluxTest* annotation, which works in the same way as *@WebMvcTest* but for reactive applications.
+
+## Testing REST clients with a mock web server
+The OkHTTP3 project provides a mock web server that you can use to test HTTP-based request/response interactions with a service downstream. 
+You can use the convenient utilities provided by Project Reactor for testing reactive applications. The *StepVerifier* object lets you process reactive streams and write assertions in
+steps through a fluent API.
