@@ -38,8 +38,8 @@ class BookClientTests {
 
         assertTrue(result.isArray());
 
-        JsonNode firstBook = result.get(0);
-
-        System.out.println("BOOK: " + firstBook.toString());
+//        JsonNode firstBook = result.get(0);
+//
+//        System.out.println("BOOK: " + firstBook.toString());
     }
 }
