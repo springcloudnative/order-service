@@ -25,6 +25,7 @@
 		<registryUrl>${REGISTRY_URL}</registryUrl>
 		<jib-maven-plugin.version>3.2.1</jib-maven-plugin.version>
 		<json.version>20180130</json.version>
+		<spring-boot-maven-plugin.version>2.6.1</spring-boot-maven-plugin.version>
 		<spring-cloud-starter-contract-stub-runner.version>3.1.1</spring-cloud-starter-contract-stub-runner.version>
 	</properties>
 
@@ -146,6 +147,7 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>${project.parent.version}</version>
 			</plugin>
 		</plugins>
 	</build>
