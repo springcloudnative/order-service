@@ -38,10 +38,12 @@ public class OrderServiceImpl implements OrderService {
      */
     @Override
     public Mono<OrderEntity> submitOrder(String isbn, int quantity) {
-        return bookClient.getBookByIsbn(isbn)
+        Mono<OrderEntity> orderEntity = bookClient.getBookByIsbn(isbn)
                 .map(book -> buildAcceptedOrder(book, quantity))
                 .defaultIfEmpty(buildRejectedOrder(isbn, quantity))
                 .flatMap(orderRepository::save);
+
+        return orderEntity;
     }
 
     public static OrderEntity buildRejectedOrder(String bookIsbn, int quantity) {
