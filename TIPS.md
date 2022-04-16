@@ -1,4 +1,6 @@
 # Preparing the microservice for deployment
+Install the command-line tool called *HTTPie* to test the behavior of the RESTful endpoints.montecarlos 
+
 1. Add Spring Cloud Config Client to the service to make it fetch configuration data from Config Service.
 
 2. Configure the Cloud Native Buildpacks integration, containerize the application, and define both CI and CD pipelines.
