@@ -19,22 +19,21 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 import reactor.test.StepVerifier;
 
-/*@DataR2dbcTest
+@DataR2dbcTest
 @Import(DataConfig.class)
 @Testcontainers
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
-@Slf4j*/
+@Slf4j
 public class OrderRepositoryR2dbcTests {
 
-/*    private static final int INTERNAL_MYSQL_PORT = 3306;
+    private static final int INTERNAL_MYSQL_PORT = 3306;
 
     @Container
-    static MySQLContainer mySQLContainer = (MySQLContainer)(new MySQLContainer("mysql:8.0")
-                .withUsername("testcontainers")
-                .withPassword("Testcontain3rs!")
-                .withReuse(true));
+    static MySQLContainer mySQLContainer = new MySQLContainer<>(DockerImageName.parse("mysql:8.0"))
+            .withReuse(true);
 
     @Autowired
     private OrderR2dbcRepository orderR2dbcRepository;
@@ -47,9 +46,7 @@ public class OrderRepositoryR2dbcTests {
 
     @DynamicPropertySource
     static void setDatasourceProperties(final DynamicPropertyRegistry registry) {
-        registry.add("spring.r2dbc.url", () ->
-                String.format("r2dbc:mysql://%s:%s/%s", mySQLContainer.getContainerIpAddress(),
-                        mySQLContainer.getFirstMappedPort(), mySQLContainer.getDatabaseName()));
+        registry.add("spring.r2dbc.url", OrderRepositoryR2dbcTests::r2dbcUrl);
         registry.add("spring.r2dbc.username", mySQLContainer::getUsername);
         registry.add("spring.r2dbc.password", mySQLContainer::getPassword);
         registry.add("spring.flyway.url", mySQLContainer::getJdbcUrl);
@@ -86,5 +83,5 @@ public class OrderRepositoryR2dbcTests {
         StepVerifier.create(orderMySqlDbRepository.save(rejectedOrder))
                 .expectNextMatches(orderEntity -> orderEntity.getStatus().equals(OrderStatus.REJECTED))
                 .verifyComplete();
-    }*/
+    }
 }

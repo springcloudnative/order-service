@@ -19,20 +19,12 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
-//@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-//@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
-//@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Slf4j
-//@ActiveProfiles("integration")
 class OrderServiceApplicationTestsIT {
-/*
 	@Container
-	static MySQLContainer<?> mySQLContainer = new MySQLContainer<>("mysql:8.0")
-			.withDatabaseName("prop")
-			.withUsername("postgres")
-			.withPassword("pass")
-			.withExposedPorts(5432);;
+	static MySQLContainer<?> mySQLContainer = new MySQLContainer<>(DockerImageName.parse("mysql:8.0"));
 
 	@Autowired
 	private WebTestClient webTestClient;
@@ -43,7 +35,7 @@ class OrderServiceApplicationTestsIT {
 	@DynamicPropertySource
 	static void mysqlProperties(DynamicPropertyRegistry registry) {
 		String jdbcUrl = mySQLContainer.getJdbcUrl();
-		registry.add("spring.r2dbc.url", () -> jdbcUrl.replace("jdbc", "r2dbc"));
+		registry.add("spring.r2dbc.url", OrderServiceApplicationTestsIT::r2dbcUrl);
 		registry.add("spring.r2dbc.username", mySQLContainer::getUsername);
 		registry.add("spring.r2dbc.password", mySQLContainer::getPassword);
 		registry.add("spring.flyway.url", mySQLContainer::getJdbcUrl);
@@ -55,7 +47,7 @@ class OrderServiceApplicationTestsIT {
 				mySQLContainer.getContainerIpAddress(),
 				mySQLContainer.getMappedPort(MySQLContainer.MYSQL_PORT),
 				mySQLContainer.getDatabaseName());
-	}*/
+	}
 
 	@Test
 	void contextLoads() {
