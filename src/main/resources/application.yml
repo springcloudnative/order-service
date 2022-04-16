@@ -13,7 +13,7 @@ spring:
     import: "optional:configserver:"
   cloud:
     config:
-      uri: h${SPRING_CLOUD_CONFIG_URI:http://localhost:8888}
+      uri: ${SPRING_CLOUD_CONFIG_URI:http://localhost:8888}
       request-connect-timeout: 5000 # 5s
       request-read-timeout: 5000 # 5s
       fail-fast: false # In production, set to true
@@ -39,5 +39,6 @@ spring:
     baseline-version: 0
 
 polar:
+  greeting: Welcome to the local book order!
   catalog-service-uri: "http://localhost:9001"
   client-time-out: 2
