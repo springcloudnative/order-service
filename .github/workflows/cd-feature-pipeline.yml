@@ -1,0 +1,30 @@
+# It will runs whenever a new code is pushed onto a branch that is not master
+# or does not start with a name release
+
+name: Feature Branch
+on:
+  push:
+    branches-ignore:
+      - 'master'
+      - 'release*'
+
+jobs:
+  test:
+    name: Unit Test
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+          distribution: temurin
+          java-version: 11
+          cache: maven
+      - name: Maven Package
+        run: |
+          chmod +x mvnw
+          ./mvnw -B clean package -DskipTests
+      - name: Maven Verify
+        run: |
+          chmod +x mvnw
+          ./mvnw -B clean verify
