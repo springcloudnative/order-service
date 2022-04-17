@@ -25,18 +25,52 @@ spec:
           ports:
             - containerPort: 9002
           env:
-            - name: BPL_JVM_THREAD_COUNT
-              value: "50"
+            - name: POLAR_CATALOG_SERVICE_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: order-service-conf
+                  key: polar-catalog-service-uri
             - name: SPRING_CLOUD_CONFIG_URI
-              value: http://config-service
+              valueFrom:
+                configMapKeyRef:
+                  name: config-service-conf
+                  key: spring-cloud-config-uri
+            - name: SPRING_R2DBC_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: polar-mysql-conf
+                  key: spring-r2dbc-url
+            - name: SPRING_FLYWAY_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: polar-mysql-conf
+                  key: spring-flyway-url
+            - name: BPL_JVM_THREAD_COUNT
+              valueFrom:
+                configMapKeyRef:
+                  name: order-service-conf
+                  key: bpl-jvm-thread-count
             - name: DB_HOST
-              value: polar-mysql
+              valueFrom:
+                configMapKeyRef:
+                  name: polar-mysql-conf
+                  key: polar-mysql-database-host
             - name: DB_NAME
-              value: polardb_catalog
+              valueFrom:
+                configMapKeyRef:
+                  name: polar-mysql-conf
+                  key: polar-mysql-database
             - name: DB_USERNAME
-              value: order_user
+              valueFrom:
+                configMapKeyRef:
+                  name: order-service-conf
+                  key: db-username
             - name: DB_PASSWORD
-              value: b3JkZXJfdXNlcgo=
+              value: b3JkZXJfdXNlcg==
+#              valueFrom:
+#                secretKeyRef:
+#                  name: order-service-creds
+#                  key: order-mysql-pasword
 
 ---
 apiVersion: v1

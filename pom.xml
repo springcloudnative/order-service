@@ -24,7 +24,7 @@
 		<registryToken>${REGISTRY_TOKEN}</registryToken>
 		<!--suppress UnresolvedMavenProperty -->
 		<registryUrl>${REGISTRY_URL}</registryUrl>
-		<jib-maven-plugin.version>2.7.1</jib-maven-plugin.version>
+		<jib-maven-plugin.version>3.2.1</jib-maven-plugin.version>
 		<json.version>20180130</json.version>
 		<spring-boot-maven-plugin.version>2.6.1</spring-boot-maven-plugin.version>
 		<jacoco-maven-plugin.version>0.8.4</jacoco-maven-plugin.version>
@@ -229,6 +229,7 @@
 	</build>
 
 	<profiles>
+		<!--This profile is used to deploy the application to the local K8 cluster using Skaffold-->
 		<profile>
 			<id>jib</id>
 			<activation>
@@ -251,7 +252,7 @@
 						<configuration>
 							<container>
 								<ports>
-									<port>9001</port>
+									<port>9002</port>
 								</ports>
 							</container>
 						</configuration>
@@ -259,6 +260,7 @@
 				</plugins>
 			</build>
 		</profile>
+
 		<profile>
 			<id>remote</id>
 			<activation>
