@@ -14,6 +14,13 @@ import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.Instant;
 
+/**
+ * Orders can go through different phases. If the requested book is available in the catalog,
+ * then the  * order is ACCEPTED. If not, it’s REJECTED. Once the order is accepted, it
+ * can be DISPATCHED.
+ *
+ * @author Ernesto A. Rodriguez Acosta
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
