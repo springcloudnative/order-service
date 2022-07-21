@@ -6,8 +6,10 @@ import com.polarbookshop.orderservice.application.service.OrderServiceImpl;
 import com.polarbookshop.orderservice.domain.OrderStatus;
 import com.polarbookshop.orderservice.infrastructure.configuration.DataConfig;
 import com.polarbookshop.orderservice.infrastructure.entity.OrderEntity;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.r2dbc.DataR2dbcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -23,10 +25,15 @@ import reactor.test.StepVerifier;
 @DataR2dbcTest
 @Import(DataConfig.class)
 @Testcontainers
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
+@Slf4j
 public class OrderRepositoryR2dbcTests {
 
+    private static final int INTERNAL_MYSQL_PORT = 3306;
+
     @Container
-    static MySQLContainer<?> mysql = new MySQLContainer<>(DockerImageName.parse("mysql:8.0"));
+    static MySQLContainer mySQLContainer = new MySQLContainer<>(DockerImageName.parse("mysql:8.0"))
+            .withReuse(true);
 
     @Autowired
     private OrderR2dbcRepository orderR2dbcRepository;
@@ -38,16 +45,16 @@ public class OrderRepositoryR2dbcTests {
     private OrderService orderService;
 
     @DynamicPropertySource
-    static void postgresqlProperties(DynamicPropertyRegistry registry) {
+    static void setDatasourceProperties(final DynamicPropertyRegistry registry) {
         registry.add("spring.r2dbc.url", OrderRepositoryR2dbcTests::r2dbcUrl);
-        registry.add("spring.r2dbc.username", mysql::getUsername);
-        registry.add("spring.r2dbc.password", mysql::getPassword);
-        registry.add("spring.flyway.url", mysql::getJdbcUrl);
+        registry.add("spring.r2dbc.username", mySQLContainer::getUsername);
+        registry.add("spring.r2dbc.password", mySQLContainer::getPassword);
+        registry.add("spring.flyway.url", mySQLContainer::getJdbcUrl);
     }
 
     private static String r2dbcUrl() {
-        return String.format("r2dbc:mysql://%s:%s/%s", mysql.getContainerIpAddress(),
-                mysql.getMappedPort(MySQLContainer.MYSQL_PORT), mysql.getDatabaseName());
+        return String.format("r2dbc:mysql://%s:%s/%s", mySQLContainer.getContainerIpAddress(),
+                mySQLContainer.getFirstMappedPort(), mySQLContainer.getDatabaseName());
     }
 
     @BeforeEach
@@ -56,11 +63,17 @@ public class OrderRepositoryR2dbcTests {
         orderService = new OrderServiceImpl(bookClient, orderMySqlDbRepository);
     }
 
+
     @Test
     void findOrderByIdWhenNotExisting() {
         StepVerifier.create(orderMySqlDbRepository.findById(394L))
                 .expectNextCount(0)
                 .verifyComplete();
+    }
+
+    @Test
+    public void testLifecycle1() {
+
     }
 
     @Test

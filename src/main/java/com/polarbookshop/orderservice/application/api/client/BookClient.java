@@ -7,7 +7,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
+
+import java.time.Duration;
 
 /**
  * This class is used to send HTTP calls to the
@@ -44,7 +48,8 @@ public class BookClient {
      * @return
      */
     public Mono<Book> getBookByIsbn(String isbn) {
-/*        return webClient
+
+        return webClient
                 .get()
                 .uri(BOOKS_ROOT_API + isbn)
                 .retrieve()
@@ -53,15 +58,7 @@ public class BookClient {
                 .onErrorResume(
                         WebClientResponseException.NotFound.class, exception -> Mono.empty()
                 )
-                .retryWhen(Retry.backoff(3, Duration.ofMillis(100)));*/
-
-        return webClient
-                .get()
-                .uri(BOOKS_ROOT_API + isbn)
-                .retrieve()
-                .onStatus(HttpStatus::isError,
-                        response -> Mono.error(new RuntimeException("ClientError")))
-                .bodyToMono(Book.class);
+                .retryWhen(Retry.backoff(3, Duration.ofMillis(100)));
     }
 
     public JsonNode getAllBooks() {
