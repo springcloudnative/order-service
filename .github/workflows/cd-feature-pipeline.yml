@@ -27,7 +27,7 @@ jobs:
       - name: Maven Verify
         run: |
           chmod +x mvnw
-          ./mvnw -Dspring.profiles.active=integration -B clean verify
+          ./mvnw -Dspring.profiles.active=integration -Dtest=!OrderRepositoryR2dbcTests -B clean verify
   code-vulnerability:
     name: Code Scanning
     runs-on: ubuntu-20.04
