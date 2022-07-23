@@ -2,8 +2,9 @@ package com.polarbookshop.orderservice.application.api.client;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.polarbookshop.orderservice.domain.dto.Book;
+import com.polarbookshop.orderservice.infrastructure.configuration.ClientProperties;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -26,10 +27,13 @@ public class BookClient {
     private static final String BOOKS_ROOT_API = "/books/";
     private final WebClient webClient;
 
+    private Long clientTimeOut;
+
     @Autowired
-    public BookClient(WebClient webClient) {
+    public BookClient(WebClient webClient, ClientProperties clientProperties) {
 
         this.webClient = webClient;
+        this.clientTimeOut = clientProperties.getClientTimeOut() == 0L ? 5L : clientProperties.getClientTimeOut();
     }
 
     /**
@@ -54,7 +58,7 @@ public class BookClient {
                 .uri(BOOKS_ROOT_API + isbn)
                 .retrieve()
                 .bodyToMono(Book.class)
-                .timeout(Duration.ofSeconds(2), Mono.empty())
+                .timeout(Duration.ofSeconds(this.clientTimeOut), Mono.empty())
                 .onErrorResume(
                         WebClientResponseException.NotFound.class, exception -> Mono.empty()
                 )

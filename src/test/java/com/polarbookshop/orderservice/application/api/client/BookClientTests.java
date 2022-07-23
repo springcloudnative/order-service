@@ -2,24 +2,40 @@ package com.polarbookshop.orderservice.application.api.client;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.polarbookshop.orderservice.domain.dto.Book;
+import com.polarbookshop.orderservice.infrastructure.configuration.ClientProperties;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
+import okhttp3.mockwebserver.RecordedRequest;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.io.IOException;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@ExtendWith(SpringExtension.class)
+@EnableConfigurationProperties(value = ClientProperties.class)
+@TestPropertySource("classpath:application.yml")
 public class BookClientTests {
 
     private MockWebServer mockWebServer;
     private BookClient bookClient;
+
+    @Autowired
+    private ClientProperties clientProperties;
 
     @BeforeEach
     public void setup() throws IOException {
@@ -33,7 +49,8 @@ public class BookClientTests {
                 .baseUrl(mockWebServer.url("/").uri().toString())
                 .build();
 
-        this.bookClient = new BookClient(webClient);
+        this.bookClient = new BookClient(webClient, this.clientProperties);
+        System.out.println("ClientProperties: " + this.clientProperties);
     }
 
     @AfterEach
@@ -43,7 +60,7 @@ public class BookClientTests {
     }
 
     @Test
-    public void whenBookExistsThenReturnBook() throws JsonProcessingException {
+    public void whenBookExistsThenReturnBook() throws JsonProcessingException, InterruptedException {
         String bookIsbn = "1234567890";
 
         JSONObject jsonObject = new JSONObject();
@@ -67,6 +84,9 @@ public class BookClientTests {
         StepVerifier.create(book)
                 .expectNextMatches(b -> b.getIsbn().equals(bookIsbn))
                 .verifyComplete();
+
+        RecordedRequest request = mockWebServer.takeRequest();
+        assertEquals("/books/1234567890", request.getPath());
     }
 
     @Test
