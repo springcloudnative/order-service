@@ -17,4 +17,4 @@ jobs:
       - name: Compile and test application  # Ensures the Maven wrapper is executable
         run: |
           chmod +x mvnw
-          ./mvnw test package
+          ./mvnw -Dspring.profiles.active=integration test package
