@@ -23,7 +23,7 @@ jobs:
       - name: Compile and test application
         run: |
           chmod +x mvnw
-          ./mvnw -B clean test -Dtest=!OrderRepositoryR2dbcTests package
+          ./mvnw -B -Dspring.profiles.active=integration clean test -Dtest=!OrderRepositoryR2dbcTests package
   code-vulnerability:
     name: Code Scanning
     runs-on: ubuntu-20.04
