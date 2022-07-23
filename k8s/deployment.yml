@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-service
+  labels:
+    app: order-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: order-service
+  template:
+    metadata:
+      labels:
+        app: order-service
+    spec:
+      containers:
+        - name: order-service
+          image: ernestoacostacuba/order-service
+          imagePullPolicy: IfNotPresent
+          lifecycle:
+            preStop:  # Makes K8 wait 5s before sending the SIGTERM signal to the Pod
+              exec:
+                command: [ "sh", "-c", "sleep 5" ]
+          ports:
+            - containerPort: 9002
+          env:
+            - name: POLAR_CATALOG_SERVICE_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: order-service-conf
+                  key: polar-catalog-service-uri
+            - name: SPRING_CLOUD_CONFIG_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: config-service-conf
+                  key: spring-cloud-config-uri
+            - name: SPRING_R2DBC_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: polar-mysql-conf
+                  key: spring-r2dbc-url
+            - name: SPRING_FLYWAY_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: polar-mysql-conf
+                  key: spring-flyway-url
+            - name: BPL_JVM_THREAD_COUNT
+              valueFrom:
+                configMapKeyRef:
+                  name: order-service-conf
+                  key: bpl-jvm-thread-count
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: polar-mysql-conf
+                  key: polar-mysql-database-host
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: polar-mysql-conf
+                  key: polar-mysql-database
+            - name: DB_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: order-service-conf
+                  key: db-username
+            - name: DB_PASSWORD
+              value: b3JkZXJfdXNlcg==
+#              valueFrom:
+#                secretKeyRef:
+#                  name: order-service-creds
+#                  key: order-mysql-pasword
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-service
+  labels:
+    app: order-service
+spec:
+  type: ClusterIP
+  selector:
+    app: order-service
+  ports:
+    - protocol: "TCP"
+      port: 80
+      targetPort: 9002
