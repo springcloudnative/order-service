@@ -14,12 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.r2dbc.DataR2dbcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.MySQLContainer;
-import org.testcontainers.junit.jupiter.Container;
+import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.DockerImageName;
 import reactor.test.StepVerifier;
 
 @DataR2dbcTest
@@ -27,13 +23,8 @@ import reactor.test.StepVerifier;
 @Testcontainers
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 @Slf4j
+@ActiveProfiles("integration")
 public class OrderRepositoryR2dbcTests {
-
-    private static final int INTERNAL_MYSQL_PORT = 3306;
-
-    @Container
-    static MySQLContainer mySQLContainer = new MySQLContainer<>(DockerImageName.parse("mysql:8.0"))
-            .withReuse(true);
 
     @Autowired
     private OrderR2dbcRepository orderR2dbcRepository;
@@ -43,19 +34,6 @@ public class OrderRepositoryR2dbcTests {
 
     private OrderMySqlDbRepository orderMySqlDbRepository;
     private OrderService orderService;
-
-    @DynamicPropertySource
-    static void setDatasourceProperties(final DynamicPropertyRegistry registry) {
-        registry.add("spring.r2dbc.url", OrderRepositoryR2dbcTests::r2dbcUrl);
-        registry.add("spring.r2dbc.username", mySQLContainer::getUsername);
-        registry.add("spring.r2dbc.password", mySQLContainer::getPassword);
-        registry.add("spring.flyway.url", mySQLContainer::getJdbcUrl);
-    }
-
-    private static String r2dbcUrl() {
-        return String.format("r2dbc:mysql://%s:%s/%s", mySQLContainer.getContainerIpAddress(),
-                mySQLContainer.getFirstMappedPort(), mySQLContainer.getDatabaseName());
-    }
 
     @BeforeEach
     void setMockOutput() {
@@ -69,11 +47,6 @@ public class OrderRepositoryR2dbcTests {
         StepVerifier.create(orderMySqlDbRepository.findById(394L))
                 .expectNextCount(0)
                 .verifyComplete();
-    }
-
-    @Test
-    public void testLifecycle1() {
-
     }
 
     @Test

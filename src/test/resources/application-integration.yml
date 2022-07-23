@@ -6,7 +6,7 @@ spring:
       on-profile: integration
     import: "optional:configserver:"
   datasource:
-    url: jdbc:tc:mysql:8.0:///polardb_catalog?TC_INITSCRIPT=file:src/main/resources/mysqlmigrations/V1__Order_initial_schema.sql
+    url: r2dbc:tc:mysql:8.0:///polardb_catalog?TC_INITSCRIPT=file:src/main/resources/mysqlmigrations/V1__Order_initial_schema.sql
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
     initialization-mode: always
   flyway:
