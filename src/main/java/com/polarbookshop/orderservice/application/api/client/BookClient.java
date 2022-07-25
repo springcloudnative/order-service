@@ -33,7 +33,7 @@ public class BookClient {
     public BookClient(WebClient webClient, ClientProperties clientProperties) {
 
         this.webClient = webClient;
-        this.clientTimeOut = clientProperties.getClientTimeOut() == 0L ? 5L : clientProperties.getClientTimeOut();
+        this.clientTimeOut = clientProperties.getClientTimeOut() == 0L ? 12L : clientProperties.getClientTimeOut();
     }
 
     /**

@@ -249,6 +249,10 @@
 								<ports>
 									<port>9002</port>
 								</ports>
+								<jvmFlags>
+									<jvmFlag>-DskipTests</jvmFlag>
+									<jvmFlag>-Dspring.profiles.active=mysqldev</jvmFlag>
+								</jvmFlags>
 							</container>
 						</configuration>
 					</plugin>

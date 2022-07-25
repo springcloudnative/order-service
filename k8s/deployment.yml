@@ -29,42 +29,42 @@ spec:
               valueFrom:
                 configMapKeyRef:
                   name: order-service-conf
-                  key: polar-catalog-service-uri
+                  key: polar_catalog_service_uri
             - name: SPRING_CLOUD_CONFIG_URI
               valueFrom:
                 configMapKeyRef:
                   name: config-service-conf
-                  key: spring-cloud-config-uri
+                  key: spring_cloud_config_uri
             - name: SPRING_R2DBC_URL
               valueFrom:
                 configMapKeyRef:
                   name: polar-mysql-conf
-                  key: spring-r2dbc-url
+                  key: spring_r2dbc_url
             - name: SPRING_FLYWAY_URL
               valueFrom:
                 configMapKeyRef:
                   name: polar-mysql-conf
-                  key: spring-flyway-url
+                  key: spring_flyway_url
             - name: BPL_JVM_THREAD_COUNT
               valueFrom:
                 configMapKeyRef:
                   name: order-service-conf
-                  key: bpl-jvm-thread-count
+                  key: bpl_jvm_thread_count
             - name: DB_HOST
               valueFrom:
                 configMapKeyRef:
                   name: polar-mysql-conf
-                  key: polar-mysql-database-host
+                  key: polar_mysql_database_host
             - name: DB_NAME
               valueFrom:
                 configMapKeyRef:
                   name: polar-mysql-conf
-                  key: polar-mysql-database
+                  key: polar_mysql_database
             - name: DB_USERNAME
               valueFrom:
                 configMapKeyRef:
                   name: order-service-conf
-                  key: db-username
+                  key: db_username
             - name: DB_PASSWORD
               value: b3JkZXJfdXNlcg==
 #              valueFrom:
