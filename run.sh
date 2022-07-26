@@ -4,6 +4,7 @@ declare project_dir=$(dirname $0)
 declare registry_url=$1
 declare registry_username=$2
 declare registry_token=$3
+declare imageVersion=$5
 
 function restart() {
     stop_all
@@ -30,19 +31,15 @@ function start_infra() {
 }
 
 function build_image() {
-  echo 'Building image with Buildpacks....'
-  ./mvnw spring-boot:build-image -Premote -DREGISTRY_URL=$1 -DREGISTRY_USERNAME=$2 -DREGISTRY_TOKEN=$3 -DskipTests=true
-}
+  echo "Building image with Buildpacks....$4"
 
-function sonarqube_analyze() {
-  echo 'Analyzing code with SonarQube....'
-  ./mvnw clean verify sonar:sonar -Dsonar.login=$1 -Dsonar.sources=src/main/java/ -Dsonar.java.binaries=target/classes -Dsonar.analysis.mode=publish -DskipTests=true
-#  ./mvnw clean package sonar:sonar -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=$1 -Dsonar.login=$2 -Dsonar.sources=src/main/java/ -Dsonar.java.binaries=target/classes -Dsonar.analysis.mode=publish -Dsonar.branch.name=$3 -DskipTests=true
-}
-
-function sonarcloud() {
-  echo 'Analyzing code with SonarQube Cloud....'
-  ./mvnw clean package sonar:sonar -Psonarcloud -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=$1 -Dsonar.login=$2 -Dsonar.sources=src/main/java/ -Dsonar.java.binaries=target/classes -Dsonar.analysis.mode=publish -Dsonar.branch.name=$3 -DskipTests=true
+  if [ -z "$4" ];
+  then
+    echo "Snapshot version"
+      ./mvnw spring-boot:build-image -Premote -DREGISTRY_URL=$1 -DREGISTRY_USERNAME=$2 -DREGISTRY_TOKEN=$3 -DskipTests=true
+  else
+    ./mvnw spring-boot:build-image -Premote -DREGISTRY_URL=$1 -DREGISTRY_USERNAME=$2 -DREGISTRY_TOKEN=$3  -DimageVersion=$4 -DskipTests=true
+  fi
 }
 
 function start_all() {
@@ -79,4 +76,3 @@ then
 fi
 
 eval ${action}
-

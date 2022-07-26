@@ -12,8 +12,8 @@ spring:
   config:
     active:
       on-profile: mysqldev
-#    enabled: true
-#    import: "optional:configserver:"
+    enabled: true
+    import: "optional:configserver:"
   r2dbc:
     username: order_user
     password: TXlzcWwzMjFPcmRlcg==
