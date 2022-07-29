@@ -9,6 +9,61 @@ spring:
     name: order-service
   lifecycle:
     timeout-per-shutdown-phase: 15s
+  cloud:
+    function:
+      definition: dispatchOrder
+    stream:
+      source: acceptOrder
+      bindings:
+        dispatchOrder-in-0:
+          destination: order-dispatched
+          group: ${spring.application.name}
+        acceptOrder-out-0:
+          destination: order-accepted
+          group: ${spring.application.name}
+  kafka:
+    bootstrap-servers: ${kafka_bootstrap_servers:localhost:9092}
+    properties:
+      sasl:
+        jaas:
+          config: org.apache.kafka.common.security.plain.PlainLoginModule required username=${kafka_username:'admin'} password=${kafka_password:'admin-secret'};
+        mechanism: PLAIN
+      security:
+        protocol: SASL_PLAINTEXT
+    consumer:
+      auto-offset-reset: earliest
+      group-id: ${spring.application.name}
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
+      max-poll-records: 1
+      fetch-max-wait: 36000
+      enable-auto-commit: false
+      isolation-level: read_committed
+      client-id: ${spring.application.name}
+    producer:
+      client-id: ${spring.application.name}
+      enable:
+        idempotence: true
+        transactional:
+          id: "prod-1"
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      retries: 2
+      stream:
+        properties:
+          spring:
+            json:
+              trusted:
+                packages: '*'
+              add:
+                type:
+                  headers: false
+    jaas:
+      enabled: true
+    listener:
+      poll-timeout: 1800000
+      concurrency: 1
+      ack-mode: manual_immediate
   config:
     active:
       on-profile: mysqldev
