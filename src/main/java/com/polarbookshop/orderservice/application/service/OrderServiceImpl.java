@@ -47,15 +47,11 @@ public class OrderServiceImpl implements OrderService {
     public Mono<OrderEntity> submitOrder(String isbn, int quantity) {
         Mono<OrderEntity> orderEntity = bookClient.getBookByIsbn(isbn)
                 .map(book -> buildAcceptedOrder(book, quantity))
-                .defaultIfEmpty(buildRejectedOrder(isbn, quantity))
+                .defaultIfEmpty(OrderService.buildRejectedOrder(isbn, quantity))
                 .flatMap(orderRepository::save)
                 .doOnNext(this::publishOrderAcceptedEvent);
 
         return orderEntity;
-    }
-
-    public static OrderEntity buildRejectedOrder(String bookIsbn, int quantity) {
-        return OrderEntity.build(bookIsbn, null, null, quantity, OrderStatus.REJECTED);
     }
 
     /**

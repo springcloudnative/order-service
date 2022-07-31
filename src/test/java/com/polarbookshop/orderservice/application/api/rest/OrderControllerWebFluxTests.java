@@ -1,6 +1,7 @@
 package com.polarbookshop.orderservice.application.api.rest;
 
 import com.polarbookshop.orderservice.application.service.OrderService;
+import com.polarbookshop.orderservice.domain.OrderStatus;
 import com.polarbookshop.orderservice.domain.dto.OrderRequest;
 import com.polarbookshop.orderservice.infrastructure.entity.OrderEntity;
 import org.junit.jupiter.api.Test;
@@ -27,10 +28,8 @@ class OrderControllerWebFluxTests {
     @Test
     void whenBookNotAvailableThenRejectOrder() {
         OrderRequest orderRequest = new OrderRequest("123456789", 3);
-        OrderEntity expectedOrder = OrderEntity.builder()
-                .bookIsbn(orderRequest.getIsbn())
-                .quantity(orderRequest.getQuantity())
-                .build();
+        OrderEntity expectedOrder = OrderService
+                .buildRejectedOrder(orderRequest.getIsbn(), orderRequest.getQuantity());
 
         given(orderService.submitOrder(orderRequest.getIsbn(), orderRequest.getQuantity()))
         .willReturn(Mono.just(expectedOrder));
@@ -43,6 +42,7 @@ class OrderControllerWebFluxTests {
                 .expectStatus().is2xxSuccessful()
                 .expectBody(OrderEntity.class).value(actualOrder -> {
                     assertThat(actualOrder).isNotNull();
+                    assertThat(actualOrder.getStatus()).isEqualTo(OrderStatus.REJECTED);
         });
     }
 }

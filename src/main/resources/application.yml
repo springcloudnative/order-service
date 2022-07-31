@@ -2,7 +2,7 @@ server:
   port: 9002
   shutdown: graceful
   netty:
-    connection-timeout: 2s
+    connection-timeout: 10s
 
 spring:
   application:
@@ -85,18 +85,6 @@ spring:
     baseline-on-migrate: true
     baseline-version: 0
     locations: classpath:mysqlmigrations
-#  cloud:
-#    config:
-#      enabled: true
-#      uri: http://localhost:8888
-#      request-connect-timeout: 5000 # 5s
-#      request-read-timeout: 5000 # 5s
-#      fail-fast: false # In production, set to true
-#      retry:
-#        max-attempts: 6
-#        initial-interval: 1000 # 1s
-#        max-interval: 2000 # 2s
-#        multiplier: 1.1
 
 polar:
   catalog-service-uri: "http://localhost:9001"

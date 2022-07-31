@@ -8,6 +8,7 @@ import com.polarbookshop.orderservice.infrastructure.configuration.DataConfig;
 import com.polarbookshop.orderservice.infrastructure.entity.OrderEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +59,7 @@ public class OrderRepositoryR2dbcTests {
     @BeforeEach
     void setMockOutput() {
         orderMySqlDbRepository = new OrderMySqlDbRepository(orderR2dbcRepository);
-        orderService = new OrderServiceImpl(bookClient, orderMySqlDbRepository);
+        // orderService = new OrderServiceImpl(bookClient, orderMySqlDbRepository);
     }
 
 
@@ -71,7 +72,7 @@ public class OrderRepositoryR2dbcTests {
 
     @Test
     void createRejectedOrder() {
-        OrderEntity rejectedOrder = OrderServiceImpl.buildRejectedOrder("1234567890", 3);
+        OrderEntity rejectedOrder = OrderService.buildRejectedOrder("1234567890", 3);
 
         StepVerifier.create(orderMySqlDbRepository.save(rejectedOrder))
                 .expectNextMatches(orderEntity -> orderEntity.getStatus().equals(OrderStatus.REJECTED))
