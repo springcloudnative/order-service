@@ -42,6 +42,12 @@ function build_image() {
   fi
 }
 
+function create_release() {
+  echo "Creating the release"
+
+  ./mvnw -Prelease clean --batch-mode release:prepare -DREGISTRY_URL=$1 -DREGISTRY_USERNAME=$2 -DREGISTRY_TOKEN=$3 -DTAG_RELEASE=$4 -DDEV_VERSION=$5
+}
+
 function start_all() {
     echo 'Removing dangling images....'
     docker rmi $(docker images --filter dangling=true -q)
