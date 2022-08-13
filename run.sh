@@ -50,7 +50,7 @@ function create_release() {
   echo "Release version....$4"
   echo "Snapshot version....$5"
 
-  ./mvnw -Prelease clean --batch-mode release:prepare -DREGISTRY_URL=$1 -DREGISTRY_USERNAME=$2 -DREGISTRY_TOKEN=$3 -Dtag=SpringBootMavenReleasePlugin-1.0.0 -DreleaseVersion=$4 -DdevelopmentVersion=$5 -DskipTests=true
+  ./mvnw clean --batch-mode release:prepare -Prelease -DREGISTRY_URL=$1 -DREGISTRY_USERNAME=$2 -DREGISTRY_TOKEN=$3 -Dtag=SpringBootMavenReleasePlugin-1.0.0 -DreleaseVersion=$4 -DdevelopmentVersion=$5 -DskipTests=true
 }
 
 function start_all() {
