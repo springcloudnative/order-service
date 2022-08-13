@@ -43,7 +43,12 @@ function build_image() {
 }
 
 function create_release() {
-  echo "Creating the release"
+  echo "Creating the release..."
+  echo "Registry....$1"
+  echo "Username....$2"
+  echo "Registry token....$3"
+  echo "Release version....$4"
+  echo "Snapshot version....$5"
 
   ./mvnw -Prelease clean --batch-mode release:prepare -DREGISTRY_URL=$1 -DREGISTRY_USERNAME=$2 -DREGISTRY_TOKEN=$3 -Dtag=SpringBootMavenReleasePlugin-1.0.0 -DreleaseVersion=$4 -DdevelopmentVersion=$5 -DskipTests=true
 }
