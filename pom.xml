@@ -428,7 +428,7 @@
 								<enabled>true</enabled>
 							</layers>
 							<image>
-								<name>${registryUsername}/${project.name}::${imageVersion}</name>
+								<name>${registryUsername}/${project.name}:${imageVersion}</name>
 								<publish>true</publish>
 								<env>
 									<BP_JVM_VERSION>11</BP_JVM_VERSION>
@@ -454,25 +454,6 @@
 								</goals>
 							</execution>
 						</executions>
-					</plugin>
-
-					<!--We need to disable the default deploy plugin as we're use the Spotify Docker plugin.-->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-deploy-plugin</artifactId>
-						<version>2.8.2</version>
-						<configuration>
-							<skip>true</skip>
-						</configuration>
-					</plugin>
-
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-release-plugin</artifactId>
-						<version>2.5.3</version>
-						<configuration>
-							<tagNameFormat>v@{imageVersion}</tagNameFormat>
-						</configuration>
 					</plugin>
 				</plugins>
 			</build>
