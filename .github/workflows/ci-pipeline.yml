@@ -1,13 +1,13 @@
 name: CI Pipeline # Name of the pipeline
-on: [push]  # When the pipeline should be executed: on push
+on: [push]        # When the pipeline should be executed: on push
 
 jobs:
   build:
     name: Build
-    runs-on: ubuntu-20.04 #The operating system on which the pipeline should run
+    runs-on: ubuntu-20.04           # The operating system on which the pipeline should run
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2 # Checks the application repository out
+        uses: actions/checkout@v2   # Checks the application repository out
       - name: Set up JDK
         uses: actions/setup-java@v2 # Configures the JDK setup
         with:
