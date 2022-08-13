@@ -9,7 +9,7 @@
 	</parent>
 	<groupId>com.polarbookshop</groupId>
 	<artifactId>order-service</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>order-service</name>
 	<description>Provides functionality for purchasing books</description>
 	<properties>
@@ -43,7 +43,7 @@
 		<connection>scm:git:${project.scm.url}</connection>
 		<developerConnection>scm:git:${project.scm.url}</developerConnection>
 		<url>git@github.com:springcloudnative/order-service.git</url>
-		<tag>v@{imageVersion}</tag>
+		<tag>SpringBootMavenReleasePlugin-1.0.0</tag>
 	</scm>
 
 	<dependencyManagement>
@@ -371,41 +371,6 @@
 										<include>**/*IT</include>
 									</includes>
 								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-
-		<!-- With this profile we enable SonarCloud analysis and define where the source code
-		is located, what classes & packages should be executed from the analysis and what
-		is SonarCloud URL.-->
-		<profile>
-			<id>sonar</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<properties>
-				<sonar.sources>.</sonar.sources>
-				<sonar.inclusions>src/main/java/**,src/main/resources/**</sonar.inclusions>
-				<sonar.exclusions>${code.coverage.exclusions}</sonar.exclusions>
-				<sonar.projectKey>9f5b468458cf6735d89bd3607f62203678aa8a3d</sonar.projectKey>
-				<sonar.organization>springcloudnative</sonar.organization>
-				<sonar.host.url>https://sonarcloud.io</sonar.host.url>
-			</properties>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.sonarsource.scanner.maven</groupId>
-						<artifactId>sonar-maven-plugin</artifactId>
-						<version>${sonar-maven-plugin.version}</version>
-						<executions>
-							<execution>
-								<phase>verify</phase>
-								<goals>
-									<goal>sonar</goal>
-								</goals>
 							</execution>
 						</executions>
 					</plugin>
