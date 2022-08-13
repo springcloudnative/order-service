@@ -44,13 +44,10 @@ function build_image() {
 
 function create_release() {
   echo "Creating the release..."
-  echo "Registry....$1"
-  echo "Username....$2"
-  echo "Registry token....$3"
-  echo "Release version....$4"
-  echo "Snapshot version....$5"
+  echo "Release version....$1"
+  echo "Snapshot version....$2"
 
-  ./mvnw clean --batch-mode release:prepare -Prelease -DREGISTRY_URL=$1 -DREGISTRY_USERNAME=$2 -DREGISTRY_TOKEN=$3 -Dtag=SpringBootMavenReleasePlugin-1.0.0 -DreleaseVersion=$4 -DdevelopmentVersion=$5 -DskipTests=true
+  ./mvnw clean --batch-mode release:prepare -Prelease -Dtag=SpringBootMavenReleasePlugin-1.0.0 -DreleaseVersion=$1 -DdevelopmentVersion=$2 -DskipTests=true
 }
 
 function start_all() {
