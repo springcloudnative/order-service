@@ -45,7 +45,7 @@ function build_image() {
 function create_release() {
   echo "Creating the release"
 
-  ./mvnw -Prelease clean --batch-mode release:prepare -DREGISTRY_URL=$1 -DREGISTRY_USERNAME=$2 -DREGISTRY_TOKEN=$3 -DTAG_RELEASE=$4 -DDEV_VERSION=$5
+  ./mvnw -Prelease clean --batch-mode release:prepare -DREGISTRY_URL=$1 -DREGISTRY_USERNAME=$2 -DREGISTRY_TOKEN=$3 $4 $5
 }
 
 function start_all() {
