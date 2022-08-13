@@ -384,9 +384,6 @@
 				<activeByDefault>false</activeByDefault>
 				<property>
 					<name>!imageVersion</name>
-					<name>!registryUsername</name>
-					<name>!registryToken</name>
-					<name>!registryUrl</name>
 				</property>
 			</activation>
 			<build>
