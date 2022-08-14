@@ -43,6 +43,16 @@ function build_image() {
   fi
 }
 
+function check_quality_code() {
+  echo "Checking quality code with Sonarqube..."
+
+  echo "Generating code coverage report by Jacoco plugin..."
+  ./mvnw clean org.jacoco:jacoco-maven-plugin:prepare-agent install
+
+  echo "Sending project code analysis to the SonarQube dashboard..."
+  ./mvnw sonar:sonar
+}
+
 function create_release() {
   echo "Creating the release..."
   echo "Release version....$1"

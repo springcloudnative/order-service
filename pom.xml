@@ -212,11 +212,11 @@
 			</extension>
 		</extensions>
 		<plugins>
-			<plugin>
+<!--			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<version>${project.parent.version}</version>
-			</plugin>
+			</plugin>-->
 
 			<plugin>
 				<groupId>org.jacoco</groupId>
@@ -332,6 +332,9 @@
 		And with maven-failsafe-plugin it enables to run integration tests.-->
 		<profile>
 			<id>integration-test</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
 			<build>
 				<plugins>
 					<plugin>
