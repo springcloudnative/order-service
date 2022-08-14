@@ -13,14 +13,19 @@ spring:
     function:
       definition: dispatchOrder
     stream:
+      # Since there isn't any acceptOrder function, we trigger the framework
+      # to create the source bidings via the spring.cloud.stream.source property.
+      # The bindings name for this external source will not be derived from a function
+      # name but the name provided by the configuration.
       source: acceptOrder
+      # Kafka common properties (ex.: destination, contentType)
       bindings:
         dispatchOrder-in-0:
           destination: order-dispatched
           group: ${spring.application.name}
         acceptOrder-out-0:
           destination: order-accepted
-          group: ${spring.application.name}
+
   kafka:
     bootstrap-servers: ${kafka_bootstrap_servers:localhost:9092}
     properties:
@@ -33,31 +38,40 @@ spring:
     consumer:
       auto-offset-reset: earliest
       group-id: ${spring.application.name}
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      key-deserializer: org.apache.kafka.common.serialization.LongDeserializer
       value-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
       max-poll-records: 1
       fetch-max-wait: 36000
+      # Makes the container send the offset information to Kafka transaction ony when
+      # MessageListener ends without error
       enable-auto-commit: false
+      # Only allows consumers to consume messages whose transaction is committed, or
+      # those messages sent without a transaction at all.
+      # Kafka won't allow consumers to read messages whose transactions are aborted/rollback
       isolation-level: read_committed
       client-id: ${spring.application.name}
     producer:
-      client-id: ${spring.application.name}
-      enable:
-        idempotence: true
-        transactional:
-          id: "prod-1"
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-      retries: 2
-      stream:
-        properties:
-          spring:
-            json:
-              trusted:
-                packages: '*'
-              add:
-                type:
-                  headers: false
+      transaction-id-prefix: tx-
+      properties:
+        enable.idempotence: true
+        transactional.id: tran-id-1
+#      client-id: ${spring.application.name}
+#      enable:
+#        idempotence: true
+#        transactional:
+#          id: "prod-1"
+#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+#      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+#      retries: 2
+#      stream:
+#        properties:
+#          spring:
+#            json:
+#              trusted:
+#                packages: '*'
+#              add:
+#                type:
+#                  headers: false
     jaas:
       enabled: true
     listener:

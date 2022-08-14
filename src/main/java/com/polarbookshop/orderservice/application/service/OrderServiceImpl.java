@@ -3,14 +3,15 @@ package com.polarbookshop.orderservice.application.service;
 import com.polarbookshop.orderservice.application.api.client.BookClient;
 import com.polarbookshop.orderservice.domain.OrderStatus;
 import com.polarbookshop.orderservice.domain.dto.Book;
-import com.polarbookshop.orderservice.domain.dto.OrderAcceptedMessageDTO;
-import com.polarbookshop.orderservice.domain.dto.OrderRequest;
+import com.polarbookshop.orderservice.domain.events.OrderAcceptedEvent;
 import com.polarbookshop.orderservice.domain.repository.OrderRepository;
 import com.polarbookshop.orderservice.infrastructure.entity.OrderEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -21,6 +22,9 @@ public class OrderServiceImpl implements OrderService {
     private final BookClient bookClient;
     private final OrderRepository orderRepository;
     private final StreamBridge streamBridge;
+
+    @Value("${spring.cloud.stream.bindings.acceptOrder-out-0.destination}")
+    private String topic;
 
     @Autowired
     public OrderServiceImpl(BookClient bookClient, OrderRepository orderRepository, StreamBridge streamBridge) {
@@ -35,6 +39,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     /**
+     * Define a saga transaction with database update and
+     * message production.
+     * To ensure the atomicity of this process, both operations
+     * are wrapped in a local transaction.
+     *
      * - Calls the Book Service to check the book disponibility.
      * - If the book is available, it accepts the order.
      * - If not available, it rejects the order.
@@ -44,6 +53,7 @@ public class OrderServiceImpl implements OrderService {
      * @return
      */
     @Override
+    @Transactional
     public Mono<OrderEntity> submitOrder(String isbn, int quantity) {
         Mono<OrderEntity> orderEntity = bookClient.getBookByIsbn(isbn)
                 .map(book -> buildAcceptedOrder(book, quantity))
@@ -86,16 +96,27 @@ public class OrderServiceImpl implements OrderService {
                 .subscribe();
     }
 
+    /**
+     * Method used for publishing events to a
+     * given destination.
+     * It accepts and OrderEntity object as input,
+     * and sends it to a Kafka topic destination using
+     * StreamBridge.
+     * @param order
+     */
     @Override
     public void publishOrderAcceptedEvent(OrderEntity order) {
-
+        // if the order is not accepted, it does nothing
         if (!order.getStatus().equals(OrderStatus.ACCEPTED)) {
             return;
         }
 
-        OrderAcceptedMessageDTO orderAcceptedMessage = new OrderAcceptedMessageDTO(order.getId());
+        // building the event to notify and order has been accepted
+        OrderAcceptedEvent orderAcceptedEvent = new OrderAcceptedEvent(order.getId());
         log.info("Sending order accepted event with id: {}", order.getId());
-        var result = streamBridge.send("order-accepted", orderAcceptedMessage);
+
+        // explicitly sends an event to the "acceptOrder-out-0" binding
+        boolean result = streamBridge.send(this.topic, orderAcceptedEvent);
         log.info("Result of sending data for order with id {}: {}", order.getId(), result);
     }
 }

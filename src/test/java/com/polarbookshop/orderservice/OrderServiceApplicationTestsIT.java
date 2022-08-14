@@ -3,8 +3,8 @@ package com.polarbookshop.orderservice;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.polarbookshop.orderservice.application.api.client.BookClient;
 import com.polarbookshop.orderservice.domain.dto.Book;
-import com.polarbookshop.orderservice.domain.dto.OrderAcceptedMessageDTO;
 import com.polarbookshop.orderservice.domain.dto.OrderRequest;
+import com.polarbookshop.orderservice.domain.events.OrderAcceptedEvent;
 import com.polarbookshop.orderservice.infrastructure.entity.OrderEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -88,8 +88,8 @@ class OrderServiceApplicationTestsIT {
 				.expectStatus().is2xxSuccessful()
 				.expectBody(OrderEntity.class).returnResult().getResponseBody();
 		assertThat(expectedOrder).isNotNull();
-		assertThat(objectMapper.readValue(output.receive().getPayload(), OrderAcceptedMessageDTO.class))
-				.isEqualTo(new OrderAcceptedMessageDTO(expectedOrder.getId()));
+		assertThat(objectMapper.readValue(output.receive().getPayload(), OrderAcceptedEvent.class))
+				.isEqualTo(new OrderAcceptedEvent(expectedOrder.getId()));
 
 		webTestClient.get().uri("/orders")
 				.exchange()
