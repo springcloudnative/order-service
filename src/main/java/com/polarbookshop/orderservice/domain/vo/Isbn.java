@@ -5,7 +5,7 @@ import org.springframework.util.ObjectUtils;
 
 import java.beans.Transient;
 import java.io.Serializable;
-import java.util.function.Function;
+import java.util.function.Predicate;
 
 @Value
 public class Isbn implements Serializable {
@@ -27,11 +27,10 @@ public class Isbn implements Serializable {
 
     @Transient
     public boolean isValidIsbn() {
-        Function<Isbn, Boolean> isValidIsbnFn = isbn ->
+        Predicate<Isbn> validIsbnPredicate = isbn ->
                 !ObjectUtils.isEmpty(isbn.getValue()) &&
                         isbn.getValue().matches("^([0-9]{10}|[0-9]{13})$");
 
-        Boolean result = isValidIsbnFn.apply(this);
-        return result.booleanValue();
+        return validIsbnPredicate.test(this);
     }
 }

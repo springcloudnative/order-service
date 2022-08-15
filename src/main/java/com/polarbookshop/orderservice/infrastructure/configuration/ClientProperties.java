@@ -19,5 +19,5 @@ public class ClientProperties {
     @NotNull
     public URI catalogServiceUri;   // Property for specifying the Catalog Service URL. It cannot be null
 
-    public long clientTimeOut; // Property for specifying the client timeout.
+    long clientTimeOut; // Property for specifying the client timeout.
 }

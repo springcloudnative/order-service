@@ -12,7 +12,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -29,13 +28,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ExtendWith(SpringExtension.class)
 @EnableConfigurationProperties(value = ClientProperties.class)
 @TestPropertySource("classpath:application.yml")
-public class BookClientTests {
+class BookClientTests {
 
     private MockWebServer mockWebServer;
     private BookClient bookClient;
 
     @Autowired
     private ClientProperties clientProperties;
+
+//    @Autowired private ObjectMapper mapper;
 
     @BeforeEach
     public void setup() throws IOException {
@@ -60,7 +61,7 @@ public class BookClientTests {
     }
 
     @Test
-    public void whenBookExistsThenReturnBook() throws JsonProcessingException, InterruptedException {
+    void whenBookExistsThenReturnBook() throws JsonProcessingException, InterruptedException {
         String bookIsbn = "1234567890";
 
         JSONObject jsonObject = new JSONObject();
@@ -90,7 +91,7 @@ public class BookClientTests {
     }
 
     @Test
-    public void whenBookNotExistsThenReturnEmpty() {
+    void whenBookNotExistsThenReturnEmpty() {
         String bookIsbn = "1234567891";
 
         MockResponse mockResponse = new MockResponse()
@@ -104,4 +105,48 @@ public class BookClientTests {
                 .expectNextCount(0)
                 .verifyComplete();
     }
+
+/*    @Test
+    void whenGetAllBooksThenReturnList() throws InterruptedException {
+        List<Book> books = new ArrayList<>();
+        books.add(Book.builder()
+                .isbn("1234567891")
+                .title("Title")
+                .author("Author")
+                .price(9.90)
+                .publisher("Polarsophia").build());
+
+        mockWebServer.enqueue(
+                new MockResponse()
+                .setResponseCode(200)
+                .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                .setBody(successBody())
+        );
+
+        bookClient.getAllBooks();
+
+        RecordedRequest request = mockWebServer.takeRequest(100, TimeUnit.MILLISECONDS);
+        assertThat(request).isNotNull();
+    }
+
+    private String successBody() {
+        List<Book> books = new ArrayList<>();
+        JSONObject jsonObject = new JSONObject();
+
+        books.add(Book.builder()
+                .isbn("1234567891")
+                .title("Title")
+                .author("Author")
+                .price(9.90)
+                .publisher("Polarsophia").build());
+
+        JsonNode listNode = mapper.valueToTree(books);
+        JSONArray request = new JSONArray(listNode.toString());
+        jsonObject.put("list", request);
+
+
+        String content = jsonObject
+                .put("books", books).toString();
+        return content;
+    }*/
 }

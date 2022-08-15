@@ -5,6 +5,7 @@ import com.polarbookshop.orderservice.domain.dto.Book;
 import com.polarbookshop.orderservice.infrastructure.configuration.ClientProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -13,6 +14,7 @@ import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 
 import java.time.Duration;
+import java.util.List;
 
 /**
  * This class is used to send HTTP calls to the
@@ -65,14 +67,12 @@ public class BookClient {
                 .retryWhen(Retry.backoff(3, Duration.ofMillis(100)));
     }
 
-    public JsonNode getAllBooks() {
-        JsonNode availableBooks = webClient.get()
+    public List<Book> getAllBooks() {
+        return webClient.get()
                 .uri(BOOKS_ROOT_API)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
-                .bodyToMono(JsonNode.class)
+                .bodyToMono(new ParameterizedTypeReference<List<Book>>() {})
                 .block();
-
-        return availableBooks;
     }
 }

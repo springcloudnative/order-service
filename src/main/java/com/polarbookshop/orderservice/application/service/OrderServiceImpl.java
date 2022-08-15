@@ -55,13 +55,11 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public Mono<OrderEntity> submitOrder(String isbn, int quantity) {
-        Mono<OrderEntity> orderEntity = bookClient.getBookByIsbn(isbn)
+        return bookClient.getBookByIsbn(isbn)
                 .map(book -> buildAcceptedOrder(book, quantity))
                 .defaultIfEmpty(OrderService.buildRejectedOrder(isbn, quantity))
                 .flatMap(orderRepository::save)
                 .doOnNext(this::publishOrderAcceptedEvent);
-
-        return orderEntity;
     }
 
     /**

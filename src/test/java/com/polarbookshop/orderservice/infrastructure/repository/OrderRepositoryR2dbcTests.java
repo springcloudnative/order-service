@@ -28,7 +28,7 @@ import reactor.test.StepVerifier;
 @Testcontainers
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 @Slf4j
-public class OrderRepositoryR2dbcTests {
+class OrderRepositoryR2dbcTests {
 
     @Container
     static MySQLContainer mySQLContainer = new MySQLContainer<>(DockerImageName.parse("mysql:8.0"))

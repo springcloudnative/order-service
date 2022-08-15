@@ -69,6 +69,7 @@ class OrderServiceApplicationTestsIT {
 
 	@Test
 	void contextLoads() {
+		assertThat(bookClient).isNotNull();
 	}
 
 	@Test

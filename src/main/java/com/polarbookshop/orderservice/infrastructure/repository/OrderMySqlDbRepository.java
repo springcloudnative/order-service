@@ -34,7 +34,6 @@ public class OrderMySqlDbRepository implements OrderRepository {
 
     @Override
     public Mono<OrderEntity> findById(Long id) {
-        Mono<OrderEntity> order = orderRepository.findById(id);
-        return order;
+        return orderRepository.findById(id);
     }
 }
